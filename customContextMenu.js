@@ -53,12 +53,12 @@
 		// Verify that the provided object is an array
 		if (config) {
 			if (!config.constructor === Array || !config.length)
-				throw "Configuration must be an array with at least one item";
+				throw "error: Configuration must be an array with at least one item";
 			else 
 				for (var i = 0, l = config.length; i < l; i++) {
 					this.addContextMenu(config[i]);
 				}
-			}
+		}
 			
 		// Add the event listener to the body to close the context menus
 		document.body.addEventListener('click', self.hideContextMenu);
@@ -89,7 +89,7 @@
 		
 		/** INITIALIZE MENU DOM OBJECT **/
 		if (!menu)
-			throw "Menu object must be provided";
+			throw "error: Menu object must be provided";
 		if (menu.constructor === Array && menu.length) { // Array of menu items provided
 			var menuDom = document.createElement("UL"),
 			listItem,
@@ -109,7 +109,7 @@
 			menu = menuDom;
 		}
 		if (!menu instanceof HTMLElement) {
-			throw "Invalid menu object";
+			throw "error: Invalid menu object";
 		}
 		document.body.appendChild(menu);
 		menu.style.display = "none";
@@ -126,6 +126,8 @@
 
 		/** INITIALIZE TARGET **/
 		target = self.enableTarget(target);
+		if (!target.id || target.id == "")
+			throw "error: All targets must have an ID";
 
 		var formattedMenu = {
 			menu: menu,
@@ -135,6 +137,15 @@
 
 		allContextMenus[target.id] = formattedMenu;
 		return formattedMenu;
+	}
+
+	function toDOM(o) {
+		if (typeof o === 'string')
+			o = document.getElementById(o);
+		if (!o instanceof HTMLElement || o == null)
+			throw "error: Invalid DOM element";
+
+		return o;
 	}
 
 	function contextEventHandler(event) {
@@ -175,10 +186,7 @@
 	* @param {string|HTMLElement} target - The string ID or DOM reference of the target
 	*/
 	customContext.prototype.enableTarget = function(target) {
-		if (typeof target === 'string')
-			target = document.getElementById(target);
-		if (!target instanceof HTMLElement || target == null)
-			throw "Invalid target";
+		target = toDOM(target);
 
 		if (!enabledTargetIDs[target.id])
 			target.addEventListener('contextmenu', contextEventHandler, true);
@@ -192,10 +200,7 @@
 	* @param {string|HTMLElement} target - The string ID or DOM reference of the target
 	*/
 	customContext.prototype.disableTarget = function(target) {
-		if (typeof target === 'string')
-			target = document.getElementById(target);
-		if (!target instanceof HTMLElement || target == null)
-			throw "Invalid target";
+		target = toDOM(target);
 
 		if (enabledTargetIDs[target.id])
 			target.removeEventListener('contextmenu', self.contextEventHandler, true);
@@ -209,10 +214,7 @@
 	* @param {string|HTMLElement} target - The string ID or DOM reference of the target
 	*/
 	customContext.prototype.clearContextMenu = function(target) {
-		if (typeof target === 'string')
-			target = document.getElementById(target);
-		if (!target instanceof HTMLElement || target == null)
-			throw "Invalid target";
+		target = toDOM(target);
 
 		if (allContextMenus[target.id]) {
 			this.disableTarget(target);

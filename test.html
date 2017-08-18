@@ -25,7 +25,7 @@
 		</style>
 		<script src="customContextMenu.js"></script>
 	</head>
-	<body>
+	<body id="body">
 		<div id="customDiv">
 			<p id="customPar"></p>
 		</div>
@@ -47,7 +47,8 @@
 							style: "font-weight: bold"
 						},
 						{
-							onClick: function() {console.log('Empty option clicked')}
+							onClick: function() {console.log('Empty option clicked')},
+							style: "background: black"
 						}
 					]
 				},
@@ -61,6 +62,10 @@
 						{
 							text: "Alert",
 							onClick: function() {alert("Alerting!")}
+						},
+						{
+							text: "Kill All Menus",
+							onClick: function() {customContext.clearAllMenus()}
 						}
 					]
 				},
