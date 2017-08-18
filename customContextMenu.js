@@ -14,8 +14,8 @@
 	* Constructor for customContext object
 	*
 	* 
-	* @param {?object} config - An object containing an array of context
-	*                           menus. See 'addContextMenu()' and examples
+	* @param {?object|Array} config - An object or an array of objects containing
+	*                           context menus. See 'addContextMenu()' and examples
 	*                           for accepted parameters.
 	*/
 	var customContext = function(config) {
@@ -49,14 +49,16 @@
 			"}";
 		document.head.insertBefore(styleDOM, document.head.childNodes[0]);
 
-		// Verify that the provided object is an array
+		// Verify config object
 		if (config) {
-			if (!config.constructor === Array || !config.length)
-				throw "error: Configuration must be an array with at least one item";
-			else // config is valid; add each menu item
-				for (var i = 0, l = config.length; i < l; i++) {
-					this.addContextMenu(config[i]);
-				}
+			if (!config.constructor === Array || !config.length) { // If config is not an array
+				if (typeof config !== 'object') // Not an object either; invalid
+					throw "error: Configuration must be an object or an array with at least one item";
+				else // config is an object; convert to an array containing itself
+					config = [config];
+			}
+			for (var i = 0, l = config.length; i < l; i++)
+				this.addContextMenu(config[i]);
 		}
 			
 		// Add the event listener to the body to close the context menus
@@ -230,8 +232,9 @@
 	/**
 	* Removes a context menu from the DOM and its target listener
 	* @param {string|HTMLElement} target - The string ID or DOM reference of the target
+	* @param {?boolean} removeFromDOM - True if the menu should be deleted from the DOM as well
 	*/
-	customContext.prototype.clearContextMenu = function(target) {
+	customContext.prototype.clearContextMenu = function(target, removeFromDOM) {
 		target = toDOM(target);
 
 		if (allContextMenus[target.id]) {
@@ -239,7 +242,8 @@
 			var menu = allContextMenus[target.id].menu;
 			if (menu == visibleContextMenu)
 				this.hideContextMenu();
-			menu.parentNode.removeChild(menu);
+			if (removeFromDOM)
+				menu.parentNode.removeChild(menu);
 			delete allContextMenus[target.id];
 			delete enabledTargetIDs[target.id];
 		}
