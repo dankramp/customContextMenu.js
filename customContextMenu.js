@@ -72,6 +72,7 @@
 	*                              an array of objects with the following fields:                 
 	*       {?string} text - The text to be displayed inline. Defaults to "".
 	*       {?function} onClick - The onClick function to be applied to the list item.
+	*       {?string} styleClass - The style class of the specific list item.
 	*
 	* 	{string|HTMLElement} target - The target DOM Element that will deploy the context menu.
 	*                                 May be the string ID of the element or the element itself.
@@ -99,6 +100,10 @@
 				listItem.appendChild(listText);
 				if (typeof menu[i].onClick === 'function')
 					listItem.addEventListener('click', menu[i].onClick, false);
+				if (typeof menu[i].styleClass === 'string')
+					listItem.className = menu[i].styleClass;
+				if (typeof menu[i].style === 'string')
+					listItem.style = menu[i].style;
 				menuDom.appendChild(listItem); 
 			}
 			menu = menuDom;
