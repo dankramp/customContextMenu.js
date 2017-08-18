@@ -1,92 +1,27 @@
 <html>
 	<head>
 		<title>Custom Context</title>
-		<style type="text/css">
-			p {
-				width: 200px;
-				height: 200px;
-				background: red;
-			}
-			div {
-				width: 300px;
-				height: 300px;
-				background: blue;
-			}
-			#customListItem {
-				color: green;
-				border: 3px solid red;
-				height: 40px;
-				font-size: 40px;
-			}
-			#customListItem:hover {
-				background: black;
-				height: 45px;
-			}
-		</style>
 		<script src="customContextMenu.js"></script>
 	</head>
+
 	<body id="body">
-		<div id="customDiv">
-			<p id="customPar"></p>
-		</div>
+
+		<h3>This page has a custom context menu. Right click to see it.</h3>
+
+		<ul id="customMenu" class="customContextMenu">
+			<li onClick="alert('Alert!')">Alert</li>
+			<li onClick="console.log('Log!')">Console Log</li>
+			<hr style="margin: 0">
+			<li onClick="window.open('https://github.com/dankramp/customContextMenu.js', '_blank')"><b>Go To GitHub</b></li>
+		</ul>
 
 		<script>
 			var customContext = new customContext(
-				[
-				{
-					target: "customDiv",
-					menu: [
-						{
-							text: "Custom Style Class",
-							onClick: function() {console.log('Option 1 clicked')},
-							id: "customListItem"
-						},
-						{
-							text: "Bold Text",
-							onClick: function() {console.log('Option 2 clicked')},
-							style: "font-weight: bold"
-						},
-						{
-							onClick: function() {console.log('Empty option clicked')},
-							style: "background: black"
-						}
-					]
-				},
-				{
-					target: "customPar",
-					menu: [
-						{
-							text: "Disable This",
-							onClick: function() {customContext.disableTarget("customPar")}
-						},
-						{
-							text: "Alert",
-							onClick: function() {alert("Alerting!")}
-						},
-						{
-							text: "Kill All Menus",
-							onClick: function() {customContext.clearAllMenus()}
-						}
-					]
-				},
-				{
-					target: document.body,
-					menu: [
-						{
-							text: "Enable all menus",
-							onClick: function() {
-								customContext.enableTarget("customPar");
-								customContext.enableTarget("customDiv");
-							}
-						},
-						{
-							text: "Go to Github",
-							onClick: function() {window.open("https://github.com/dankramp/customContextMenu.js", '_blank')}
-						}
-					]
-				}
-			]);
-
+				[{
+					target: "body",
+					menu: "customMenu"
+				}]);
 		</script>
+		
 	</body>
 </html>

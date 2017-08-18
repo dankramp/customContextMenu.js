@@ -67,8 +67,8 @@
 	* 
 	* Adds a new context menu. The following items may be contained in obj:
 	*
-	* 	{array|HTMLElement} menu - The menu element. May be a DOM reference or 
-	*                              an array of objects with the following fields:                 
+	* 	{array|string|HTMLElement} menu - The menu element. May be a DOM element, a string ID, 
+	*                                     or an array of objects with the following fields:                 
 	*       {?string} text - The text to be displayed inline. Defaults to "".
 	*       {?function} onClick - The onClick function to be applied to the list item.
 	*       {?string} style - The style of the specific list item.
@@ -111,9 +111,13 @@
 			menu = menuDom;
 			document.body.appendChild(menu);
 		}
+		else {
+			menu = toDOM(menu);
+		}
+		/*
 		else if (!menu instanceof HTMLElement) {
 			throw "error: Invalid menu object";
-		}
+		}*/
 		
 		menu.style.display = "none";
 
