@@ -13,7 +13,7 @@
 				background: blue;
 			}
 		</style>
-		<script src="customContext.js"></script>
+		<script src="customContextMenu.js"></script>
 	</head>
 	<body>
 		<div id="customDiv">
@@ -52,6 +52,8 @@
 					]
 				}
 			]);
+
+			customContext.disableTarget("customDiv");
 		</script>
 	</body>
 </html>

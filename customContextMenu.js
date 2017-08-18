@@ -1,13 +1,20 @@
+;(function(undefined) {
+	"use strict;"
+
+	//var allContextMenus = {},
+	//enabledTargetIDs = {},
+	//visibleContextMenu = undefined;
 /**
 * Constructor for customContext object
 * @param {object} config - Takes the following parameters:
 *   target (required): The DOM element or ID of a DOM element on which to launch the context menu
 *   menu (required): The DOM element of an unordered list or an array of list items
-*   style (optional): The style class of the 
+*   style (optional): The style class of the list
 */
 var customContext = function(config) {
 	// Public variables
-	this.allContextMenus = [];
+	this.allContextMenus = {};
+	this.enabledTargetIDs = {};
 	this.visibleContextMenu = undefined;
 
 	// Private variables
@@ -28,8 +35,8 @@ var customContext = function(config) {
 		"padding-left: 0;" +
 		"min-height: 20px;" +
 		"min-width: 200px;" +
-		"}";
-	styleDOM.innerHTML += ".customContextMenu li {" +
+		"}" +
+		".customContextMenu li {" +
 		"display: block;" +
 		"padding: 8px 20px 8px 10px;" +
 		"color: #4f4f4f;" +
@@ -41,16 +48,16 @@ var customContext = function(config) {
 		"}";
 	document.head.appendChild(styleDOM);
 
-	// Verify the config input is provided as an array
-	if (!config)
-		throw "A configuration object must be provided";
-	if (!config.constructor === Array || !config.length)
-		throw "Configuration must be an array with at least one item";
-
-	for (var i = 0, l = config.length; i < l; i++) {
-		this.allContextMenus.push(this.addContextMenu(config[i]));
+	// Verify that the provided object is an array
+	if (config) {
+		if (!config.constructor === Array || !config.length)
+			throw "Configuration must be an array with at least one item";
+		else 
+			for (var i = 0, l = config.length; i < l; i++) {
+				this.addContextMenu(config[i]);
+			}
 	}
-	
+		
 	// Add the event listener to the body to close the context menus
 	document.body.addEventListener('click', function(event) {
 		self.hideContextMenu();
@@ -142,15 +149,61 @@ customContext.prototype.addContextMenu = function(obj) {
 		target = document.getElementById(target);
 	if (!target instanceof HTMLElement || target == null)
 		throw "Invalid target";
-	target.addEventListener('contextmenu', function(event) {
-		event.preventDefault();
-		self.displayContextMenu(menu, {x: event.clientX, y: event.clientY} );
-	}, true);
+	target.addEventListener('contextmenu', self.contextEventHandler.bind(self), true);
 
-
-	return {
+	var formattedMenu = {
 		menu: menu,
 		target: target,
 		style: menu.className
 	};
+
+	self.allContextMenus[target.id] = formattedMenu;
+	self.enabledTargetIDs[target.id] = true;
+	return formattedMenu;
 }
+
+customContext.prototype.contextEventHandler = function(event) {
+	event.preventDefault();
+	this.displayContextMenu(
+		this.allContextMenus[event.target.id].menu,
+		{x: event.clientX, y: event.clientY} );
+}
+
+/**
+* Enables context menu on provided target
+* @param {string|HTMLElement} target - The string ID or DOM reference of the target
+*/
+customContext.prototype.enableTarget = function(target) {
+	var self = this;
+	if (typeof target === 'string')
+		target = document.getElementById(target);
+	if (!target instanceof HTMLElement || target == null)
+		throw "Invalid target";
+	if (!this.enabledTargetIDs[target.id])
+		target.addEventListener('contextmenu', self.contextEventHandler.bind(self), true);
+	this.enabledTargetIDs[target.id] = true;
+}
+
+/**
+* Disables context menu on provided target
+* @param {string|HTMLElement} target - The string ID or DOM reference of the target
+*/
+customContext.prototype.disableTarget = function(target) {
+	console.log("Disabling " + target);
+	var self = this;
+	if (typeof target === 'string')
+		target = document.getElementById(target);
+	if (!target instanceof HTMLElement || target == null)
+		throw "Invalid target";
+
+	if (this.enabledTargetIDs[target.id]) {
+		target.removeEventListener('contextmenu', self.contextEventHandler.bind(self), true);
+		console.log("Removed listener");
+		console.log(target);
+	}
+	delete this.enabledTargetIDs[target.id];
+}
+
+	this.customContext = customContext;
+
+}).call(this);
