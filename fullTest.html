@@ -34,10 +34,12 @@
 		<script src="customContextMenu.js"></script>
 	</head>
 	<body id="body">
+		<h1>Right-click anywhere to see custom context menus</h1>
 		<div id="customDiv">
-			<p id="customPar"></p>
+			<h2>Custom div menu</h2>
+			<p id="customPar">Custom paragraph menu</p>
 		</div>
-		<div id="smallDiv"></div>
+		<div id="smallDiv">Small div</div>
 		<ul id="smallDivMenu" class="customContextMenu">
 			<li onClick="alert('4')">2 + 2</li>
 			<li onClick="console.log(document.getElementById('smallDivMenu'))">This is a DOM context menu</li>
