@@ -1,7 +1,7 @@
 <html>
 	<head>
 		<title>Custom Context</title>
-		<style>
+		<style type="text/css">
 			p {
 				width: 200px;
 				height: 200px;
@@ -11,6 +11,16 @@
 				width: 300px;
 				height: 300px;
 				background: blue;
+			}
+			#customListItem {
+				color: green;
+				border: 3px solid red;
+				height: 40px;
+				font-size: 40px;
+			}
+			#customListItem:hover {
+				background: black;
+				height: 45px;
 			}
 		</style>
 		<script src="customContextMenu.js"></script>
@@ -27,12 +37,12 @@
 					target: "customDiv",
 					menu: [
 						{
-							text: "Option 1",
+							text: "Custom Style Class",
 							onClick: function() {console.log('Option 1 clicked')},
-							styleClass: "listItem"
+							id: "customListItem"
 						},
 						{
-							text: "Option 2",
+							text: "Bold Text",
 							onClick: function() {console.log('Option 2 clicked')},
 							style: "font-weight: bold"
 						},
@@ -45,11 +55,28 @@
 					target: "customPar",
 					menu: [
 						{
-							text: "Option A"
+							text: "Disable This",
+							onClick: function() {customContext.disableTarget("customPar")}
 						},
 						{
-							text: "Option B",
-							onClick: function() {console.log('Option B')}
+							text: "Alert",
+							onClick: function() {alert("Alerting!")}
+						}
+					]
+				},
+				{
+					target: document.body,
+					menu: [
+						{
+							text: "Enable all menus",
+							onClick: function() {
+								customContext.enableTarget("customPar");
+								customContext.enableTarget("customDiv");
+							}
+						},
+						{
+							text: "Go to Github",
+							onClick: function() {window.open("https://github.com/dankramp/customContextMenu.js", '_blank')}
 						}
 					]
 				}

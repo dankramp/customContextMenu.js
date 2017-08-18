@@ -48,7 +48,7 @@
 			"text-decoration: none;" +
 			"cursor: default;" +
 			"}";
-		document.head.appendChild(styleDOM);
+		document.head.insertBefore(styleDOM, document.head.childNodes[0]);
 
 		// Verify that the provided object is an array
 		if (config) {
@@ -72,7 +72,7 @@
 	*                              an array of objects with the following fields:                 
 	*       {?string} text - The text to be displayed inline. Defaults to "".
 	*       {?function} onClick - The onClick function to be applied to the list item.
-	*       {?string} styleClass - The style class of the specific list item.
+	*       {?string} style - The style of the specific list item.
 	*
 	* 	{string|HTMLElement} target - The target DOM Element that will deploy the context menu.
 	*                                 May be the string ID of the element or the element itself.
@@ -100,10 +100,10 @@
 				listItem.appendChild(listText);
 				if (typeof menu[i].onClick === 'function')
 					listItem.addEventListener('click', menu[i].onClick, false);
-				if (typeof menu[i].styleClass === 'string')
-					listItem.className = menu[i].styleClass;
 				if (typeof menu[i].style === 'string')
 					listItem.style = menu[i].style;
+				if (typeof menu[i].id === 'string')
+					listItem.id = menu[i].id;
 				menuDom.appendChild(listItem); 
 			}
 			menu = menuDom;
@@ -116,8 +116,10 @@
 
 
 		/** INITIALIZE STYLE **/
-		if (typeof style === 'string') // String class is provided
-			menu.className = style;
+		if (typeof style === 'string') { // String class is provided
+			if (style != "") 
+				menu.className = style;
+		}
 		else // Use default style class
 			menu.className = "customContextMenu";
 
@@ -135,7 +137,7 @@
 		return formattedMenu;
 	}
 
-	customContext.prototype.contextEventHandler = function(event) {
+	function contextEventHandler(event) {
 		if (enabledTargetIDs[this.id]) {
 			event.preventDefault();
 			self.displayContextMenu(
@@ -179,7 +181,7 @@
 			throw "Invalid target";
 
 		if (!enabledTargetIDs[target.id])
-			target.addEventListener('contextmenu', self.contextEventHandler, true);
+			target.addEventListener('contextmenu', contextEventHandler, true);
 		enabledTargetIDs[target.id] = true;
 
 		return target;
