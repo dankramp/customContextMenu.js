@@ -2,10 +2,10 @@
 	"use strict;"
 
 	// Public variables
-	var allContextMenus = {},
-	enabledTargetIDs = {},
-	visibleContextMenu = undefined,
-	self = undefined;
+	var allContextMenus = {}, // Indexes all context menus by target ID
+	enabledTargetIDs = {}, // Indexes enable state by target ID
+	visibleContextMenu = undefined, // Contains reference to visible menu
+	self = undefined; // References this instance
 
 
 	/**
@@ -20,10 +20,9 @@
 	*/
 	var customContext = function(config) {
 		self = this;
-		// Private variables
-		var styleDOM = document.createElement('style');
 
-		// Initialize style sheet with default list style
+		// Initialize style sheet with default context menu style
+		var styleDOM = document.createElement('style');
 		styleDOM.type = 'text/css';
 		styleDOM.innerHTML = ".customContextMenu {" + 
 			"z-index: 1;" +
@@ -54,7 +53,7 @@
 		if (config) {
 			if (!config.constructor === Array || !config.length)
 				throw "error: Configuration must be an array with at least one item";
-			else 
+			else // config is valid; add each menu item
 				for (var i = 0, l = config.length; i < l; i++) {
 					this.addContextMenu(config[i]);
 				}
@@ -80,17 +79,20 @@
 	*                     default styling class is used.
 	*
 	* @param {object} obj - The object containing the context menu data
-	* @return {object} An object containing the properly formatted data
+	* @returna {object} An object containing the properly formatted data
 	*/
 	customContext.prototype.addContextMenu = function(obj) {
+		// Local variables
 		var menu = obj['menu'],
 		style = obj['style'],
 		target = obj['target'];
 		
 		/** INITIALIZE MENU DOM OBJECT **/
+		// Menu can either reference a DOM object or be provided as an array of items
 		if (!menu)
 			throw "error: Menu object must be provided";
 		if (menu.constructor === Array && menu.length) { // Array of menu items provided
+			// Creates unordered list and adds all list items
 			var menuDom = document.createElement("UL"),
 			listItem,
 			listText;
@@ -98,26 +100,27 @@
 				listItem = document.createElement("LI");
 				listText = document.createTextNode(menu[i].text || "");
 				listItem.appendChild(listText);
-				if (typeof menu[i].onClick === 'function')
+				if (typeof menu[i].onClick === 'function') // If valid onClick function is provided
 					listItem.addEventListener('click', menu[i].onClick, false);
-				if (typeof menu[i].style === 'string')
+				if (typeof menu[i].style === 'string') // If string style is provided
 					listItem.style = menu[i].style;
-				if (typeof menu[i].id === 'string')
+				if (typeof menu[i].id === 'string') // If string ID is provided
 					listItem.id = menu[i].id;
 				menuDom.appendChild(listItem); 
 			}
 			menu = menuDom;
+			document.body.appendChild(menu);
 		}
-		if (!menu instanceof HTMLElement) {
+		else if (!menu instanceof HTMLElement) {
 			throw "error: Invalid menu object";
 		}
-		document.body.appendChild(menu);
+		
 		menu.style.display = "none";
 
 
 		/** INITIALIZE STYLE **/
 		if (typeof style === 'string') { // String class is provided
-			if (style != "") 
+			if (style != "") // An empty string class allows user to not assign any style class
 				menu.className = style;
 		}
 		else // Use default style class
@@ -137,11 +140,15 @@
 			style: menu.className
 		};
 
-
 		allContextMenus[target.id] = formattedMenu;
 		return formattedMenu;
 	}
 
+	/**
+	* Converts a string to DOM element and/or verifies that element exists
+	* @param {string|object} o - The HTMLElement or string to be checked
+	* @returns {HTMLElement} The corresponding HTMLElement
+	*/
 	function toDOM(o) {
 		if (typeof o === 'string')
 			o = document.getElementById(o);
@@ -151,6 +158,10 @@
 		return o;
 	}
 
+	/**
+	* PRIVATE: Displays the corresponding context menu if enabled
+	* @param {object} event - The contextmenu event that was called
+	*/
 	function contextEventHandler(event) {
 		if (enabledTargetIDs[this.id]) {
 			event.preventDefault();
