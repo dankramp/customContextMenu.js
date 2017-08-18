@@ -113,13 +113,8 @@
 			menu = menuDom;
 			document.body.appendChild(menu);
 		}
-		else {
+		else
 			menu = toDOM(menu);
-		}
-		/*
-		else if (!menu instanceof HTMLElement) {
-			throw "error: Invalid menu object";
-		}*/
 		
 		menu.style.display = "none";
 
