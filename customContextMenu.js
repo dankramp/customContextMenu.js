@@ -4,7 +4,7 @@
 	// Public variables
 	var allContextMenus = {},
 	enabledTargetIDs = {},
-	visibleContextMenu = undefined
+	visibleContextMenu = undefined,
 	self = undefined;
 
 
@@ -61,35 +61,7 @@
 			}
 			
 		// Add the event listener to the body to close the context menus
-		document.body.addEventListener('click', function(event) {
-			self.hideContextMenu();
-		});
-	}
-
-	/**
-	* Displays the context menu at the coordinates provided in event
-	* 
-	* @param {HTMLElement} menu - The DOM element containing the menu (ol)
-	* @param {object} point - The point where the menu should be displayed
-	*/
-	customContext.prototype.displayContextMenu = function(menu, point) {
-		if (visibleContextMenu) {
-			visibleContextMenu.style.display = "none";
-		}
-		menu.style.top = point.y;
-		menu.style.left = point.x;
-		menu.style.display = "block";
-		visibleContextMenu = menu;
-	}
-
-	/**
-	* Hides the currently displayed context menu
-	*/
-	customContext.prototype.hideContextMenu = function() {
-		if (visibleContextMenu) {
-			visibleContextMenu.style.display = "none";
-			visibleContextMenu = undefined;
-		}
+		document.body.addEventListener('click', self.hideContextMenu);
 	}
 
 	/**
@@ -159,11 +131,35 @@
 	}
 
 	customContext.prototype.contextEventHandler = function(event) {
-		if (enabledTargetIDs[event.target.id]) {
+		if (enabledTargetIDs[this.id]) {
 			event.preventDefault();
 			self.displayContextMenu(
-				allContextMenus[event.target.id].menu,
+				allContextMenus[this.id].menu,
 				{x: event.clientX, y: event.clientY} );
+		}
+	}
+
+	/**
+	* Displays the context menu at the coordinates provided in event
+	* 
+	* @param {HTMLElement} menu - The DOM element containing the menu (ol)
+	* @param {object} point - The point where the menu should be displayed
+	*/
+	customContext.prototype.displayContextMenu = function(menu, point) {
+		this.hideContextMenu();
+		menu.style.top = point.y;
+		menu.style.left = point.x;
+		menu.style.display = "block";
+		visibleContextMenu = menu;
+	}
+
+	/**
+	* Hides the currently displayed context menu
+	*/
+	customContext.prototype.hideContextMenu = function() {
+		if (visibleContextMenu) {
+			visibleContextMenu.style.display = "none";
+			visibleContextMenu = undefined;
 		}
 	}
 
@@ -177,17 +173,15 @@
 		if (!target instanceof HTMLElement || target == null)
 			throw "Invalid target";
 
-		if (!enabledTargetIDs[target.id]) {
+		if (!enabledTargetIDs[target.id])
 			target.addEventListener('contextmenu', self.contextEventHandler, true);
-			console.log("Added event listener to " + target.id);
-		}
 		enabledTargetIDs[target.id] = true;
 
 		return target;
 	}
 
 	/**
-	* Disables context menu on provided target
+	* Disables context menu listener on provided target
 	* @param {string|HTMLElement} target - The string ID or DOM reference of the target
 	*/
 	customContext.prototype.disableTarget = function(target) {
@@ -196,15 +190,17 @@
 		if (!target instanceof HTMLElement || target == null)
 			throw "Invalid target";
 
-		if (enabledTargetIDs[target.id]) {
+		if (enabledTargetIDs[target.id])
 			target.removeEventListener('contextmenu', self.contextEventHandler, true);
-			console.log("Removed event listener from " + target.id);
-		}
 		enabledTargetIDs[target.id] = false;
 
 		return target;
 	}
 
+	/**
+	* Removes a context menu from the DOM and its target listener
+	* @param {string|HTMLElement} target - The string ID or DOM reference of the target
+	*/
 	customContext.prototype.clearContextMenu = function(target) {
 		if (typeof target === 'string')
 			target = document.getElementById(target);
@@ -222,6 +218,19 @@
 		}
 		else
 			throw "Target menu does not exist";
+	}
+
+	/**
+	* Removes all context menus from the DOM and all target listeners
+	* Essentially restarts the plugin except for style sheet and body listener
+	*/
+	customContext.prototype.clearAllMenus = function() {
+		for (t in allContextMenus) {
+			self.clearContextMenu(t);
+		}
+		allContextMenus = {};
+		enabledTargetIDs = {};
+		visibleContextMenu = undefined;
 	}
 
 	// Set the customContext object globally
