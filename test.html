@@ -1,57 +1,27 @@
 <html>
 	<head>
 		<title>Custom Context</title>
-		<style>
-			p {
-				width: 200px;
-				height: 200px;
-				background: red;
-			}
-			div {
-				width: 300px;
-				height: 300px;
-				background: blue;
-			}
-		</style>
-		<script src="customContext.js"></script>
+		<script src="customContextMenu.js"></script>
 	</head>
-	<body>
-		<div id="customDiv">
-			<p id="customPar"></p>
-		</div>
+
+	<body id="body">
+
+		<h3>This page has a custom context menu. Right click to see it.</h3>
+
+		<ul id="customMenu" class="customContextMenu">
+			<li onClick="alert('Alert!')">Alert</li>
+			<li onClick="console.log('Log!')">Console Log</li>
+			<hr style="margin: 0">
+			<li onClick="window.open('https://github.com/dankramp/customContextMenu.js', '_blank')"><b>Go To GitHub</b></li>
+		</ul>
 
 		<script>
 			var customContext = new customContext(
-				[
-				{
-					target: "customPar",
-					menu: [
-						{
-							text: "Option 1",
-							onClick: function() {console.log('Option 1 clicked')}
-						},
-						{
-							text: "Option 2",
-							onClick: function() {console.log('Option 2 clicked')}
-						},
-						{
-							onClick: function() {console.log('Empty option clicked')}
-						}
-					]
-				},
-				{
-					target: "customDiv",
-					menu: [
-						{
-							text: "Option A"
-						},
-						{
-							text: "Option B",
-							onClick: function() {console.log('Option B')}
-						}
-					]
-				}
-			]);
+				[{
+					target: "body",
+					menu: "customMenu"
+				}]);
 		</script>
+		
 	</body>
 </html>
