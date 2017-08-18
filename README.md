@@ -1,2 +1,4 @@
 # customContextMenu.js
-Easily create custom context menus in JavaScript
+This plugin allows the user to create custom context menus quickly and easily. Created by @dankramp.
+
+
