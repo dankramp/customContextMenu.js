@@ -128,12 +128,15 @@
 		target = self.enableTarget(target);
 		if (!target.id || target.id == "")
 			throw "error: All targets must have an ID";
+		if (allContextMenus[target.id])
+			throw "error: Target with this ID already exists";
 
 		var formattedMenu = {
 			menu: menu,
 			target: target,
 			style: menu.className
 		};
+
 
 		allContextMenus[target.id] = formattedMenu;
 		return formattedMenu;
