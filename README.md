@@ -1,7 +1,7 @@
 # customContextMenu.js
 This plugin allows the user to create custom context menus quickly and easily. Created by Daniel Kramp 2017.
 
-See the [example page](http://rawgit.com/DANKRAMP/customContextMenu.js/master/fullTest.html) for a sample of how the plugin works.
+See the [example page](http://rawgit.com/dankramp/customContextMenu.js/master/tests/fullTest.html) for a sample of how the plugin works.
 
 ## Features
 ### Quick and Simple to Begin
